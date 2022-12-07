@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Sirenix.OdinInspector;
+using Unity.VisualScripting;
 
 public enum CandyType
 {
@@ -65,7 +66,7 @@ public class Grid : MonoBehaviour
         candies = new Candy[25, 25];
 
         GenerationGrid();
-        StartCoroutine(GenerationCandy());
+        StartCoroutine(GenerationCandy());    
     }
 
     private float timer = 0f;
@@ -204,15 +205,6 @@ public class Grid : MonoBehaviour
         };
     }
     
-    [Button]
-    public void Test()
-    {
-        foreach (var item in candies)
-        {
-            Debug.Log(item);
-        }
-    }
-    
     int SetID(int x, int y, int width)
     {
         return y * width + x;
@@ -224,26 +216,6 @@ public class Grid : MonoBehaviour
         return (id % width, (int)Mathf.Floor(id / width));
     }
     
-    public List<Vector2> GetSpiral(int x, int y)
-    {
-        List<Vector2> spiralPos = new List<Vector2>();
-        
-        spiralPos.Add(new Vector2(x, y * - offset));
-        Debug.Log($"{x} : {y - offset}");
-        
-        return spiralPos;
-    }
-    
-    public Vector2 GetWorldPosition(Candy candy)
-    {
-        return new Vector2(candy.x, candy.y);
-    }
-
-    public void OnExitCandy(Candy candy)
-    {
-        //enteredCandy.transform.localScale = new Vector3(1.1f, 1.1f, 1.1f);
-    }
-
     public void OnEnterCandy(Candy candy)
     {
         enteredCandy = candy;
@@ -267,267 +239,9 @@ public class Grid : MonoBehaviour
     
     public void SwapBlock(Candy candy_1,Candy candy_2)
     {
-        if (gameOver)
-        {
-            return;
-        }
         
-        candies[candy_1.X, candy_1.Y] = candy_2;
-        candies[candy_2.X, candy_2.Y] = candy_1;
-        
-        Debug.Log(candies[candy_1.X, candy_1.Y]);
-        Debug.Log(candies[candy_2.X, candy_2.Y]);
-
-        if (GetMatch(candy_1, candy_2.X, candy_2.Y) != null || GetMatch(candy_2, candy_1.X, candy_1.Y) != null)
-        {
-            int block1X = candy_1.X;
-            int block1Y = candy_1.Y;
-
-            int block2X = candy_2.X;
-            int block2Y = candy_2.Y;
-
-            //candy_1.MoveableBlock.Move(candy_2.X, candy_2.Y, fillTime);
-            //candy_2.MoveableBlock.Move(block1X, block1Y, fillTime);
-            //ClearAllValidMatches();
-            Debug.Log("Matching succesful !!");
-
-            /*if(candy_1.BlockType == BlockType.ROW_CLEAR || candy_1.BlockType == BlockType.COLUMN_CLEAR)
-            {
-                ClearBlock(block1X, block1Y);
-            }
-            if (block_2.BlockType == BlockType.ROW_CLEAR || block_2.BlockType == BlockType.COLUMN_CLEAR)
-            {
-                ClearBlock(block2X, block2Y);
-            }*/
-
-            pressedCandy = null;
-            enteredCandy = null;
-
-            //StartCoroutine(Fill());
-            //level.OnMove();
-        }
-        else
-        {
-            Debug.Log("Can't not match !!");
-            //blocks[block_1.X, block_1.Y] = block_1;
-            //blocks[block_2.X, block_2.Y] = block_1;
-        }  
     }
-    
-    public List<Candy> GetMatch(Candy candy, int newX, int newY)
-    {
-        CandyType color = candy.CandyType.Color;
-        List<Candy> xBlocks = new List<Candy>();
-        List<Candy> yBlocks = new List<Candy>();
-        List<Candy> matchBlocks = new List<Candy>();
 
-        //check x
-        xBlocks.Add(candy);
-        Debug.Log($"{newX} || {newY}");
-        
-        
-        for (int dir = 0; dir <= offset; dir++)
-        {
-            for (int xOffset = offset; xOffset < Width; xOffset++)
-            {
-                int x;
-
-                if (dir == 0)
-                {
-                    //Left
-                    x = newX - xOffset;
-                }
-                else
-                {
-                    //Right
-                    x = newX + xOffset;
-                }
-                //check block match is out of ranged
-                if (x < 0 || x >= Width)
-                {
-                    break;
-                }
-                
-                
-                //check block is the same color become matching.
-                if (candies[x, newY].CandyType.Color == color)
-                {
-                    xBlocks.Add(candies[x, newY]);
-                }
-                else // or return
-                {
-                    break;
-                }
-            }
-        }
-        if (xBlocks.Count >= 3)
-        {
-            for (int i = 0; i < xBlocks.Count; i++)
-            {
-                matchBlocks.Add(xBlocks[i]);
-            }
-        }
-
-        //Traverse verticalll and horizontally if we found a match
-        if (xBlocks.Count >= 3)
-        {
-            for (int i = 0; i < xBlocks.Count; i++)
-            {
-                for (int dir = 0; dir <= offset; dir++)
-                {
-                    for (int yOffset = offset; yOffset < Height; yOffset++)
-                    {
-                        int y;
-
-                        if (dir == 0)
-                        {
-                            //check UP
-                            y = newY - yOffset;
-                        }
-                        else
-                        {
-                            //check DOWM
-                            y = newY + yOffset;
-                        }
-
-                        if (y < 0 || y >= Height)
-                        {
-                            break;
-                        }
-                        //check this adjacent block is colored and this block is matching. 
-                        if (candies[xBlocks[i].X, y].CandyType.Color == color)
-                        { 
-                            yBlocks.Add(candies[xBlocks[i].X, y]);
-                        }
-                        else
-                        {
-                            break;
-                        }
-                    }
-                }
-                if (yBlocks.Count < 2)
-                {
-                    yBlocks.Clear();
-                }
-                else
-                {
-                    for (int j = 0; j < yBlocks.Count; j++)
-                    {
-                        matchBlocks.Add(yBlocks[j]);
-                    }
-                    break;
-                }
-            }
-        }
-        if (matchBlocks.Count >= 3)
-        {
-            return matchBlocks;
-        }
-        //Didn't find anything going x;
-        xBlocks.Clear();
-        yBlocks.Clear();
-        //check vertical
-        yBlocks.Add(candy);
-
-        for (int dir = 0; dir <= offset; dir++)
-        {
-            for (int yOffset = offset; yOffset < Height; yOffset++)
-            {
-                int y;
-
-                if (dir == 0)
-                {
-                    //Left
-                    y = newY - yOffset;
-                }
-                else
-                {
-                    //Right
-                    y = newY + yOffset;
-                }
-                //check block match is out of ranged
-                if (y < 0 || y >= Height)
-                {
-                    break;
-                }
-                //check block is the same color become matching.
-                if (candies[newX, y].CandyType.Color == color)
-                {
-                    yBlocks.Add(candies[newX, y]);
-                }
-                else // or return
-                {
-                    break;
-                }
-            }
-        }
-        if (yBlocks.Count >= 3)
-        {
-            for (int i = 0; i < yBlocks.Count; i++)
-            {
-                matchBlocks.Add(yBlocks[i]);
-            }
-        }
-
-        //Traverse verticalll and horizontally if we found a match
-        if (yBlocks.Count >= 3)
-        {
-            for (int i = 0; i < yBlocks.Count; i++)
-            {
-                for (int dir = 0; dir <= offset; dir++)
-                {
-                    for (int xOffset = offset; xOffset < Width; xOffset++)
-                    {
-                        int x;
-
-                        if (dir == 0)
-                        {
-                            //check Left
-                            x = newX - xOffset;
-                        }
-                        else
-                        {
-                            //check Right
-                            x = newX + xOffset;
-                        }
-
-                        if (x < 0 || x >= Width)
-                        {
-                            break;
-                        }
-                        //check this adjacent block is colored and this block is matching. 
-                        if (candies[x, yBlocks[i].Y].CandyType.Color == color)
-                        {
-                            xBlocks.Add(candies[x, yBlocks[i].Y]);
-                        }
-                        else
-                        {
-                            break;
-                        }
-                    }
-                }
-                if (xBlocks.Count < 2)
-                {
-                    xBlocks.Clear();
-                }
-                else
-                {
-                    for (int j = 0; j < xBlocks.Count; j++)
-                    {
-                        matchBlocks.Add(xBlocks[j]);
-                    }
-                    break;
-                }
-            }
-        }
-        if (matchBlocks.Count >= 3)
-        {
-            return matchBlocks;
-        }
-            
-        return null;
-    }
-    
     public bool IsAdjacent(Candy candy_1, Candy candy_2)
     {
         return (candy_1.X == candy_2.X && (int)Mathf.Abs(candy_1.Y - candy_2.Y) == offset) ||
@@ -544,51 +258,56 @@ public class Grid : MonoBehaviour
     public Score[] scores;
 
     public Dictionary<CandyType, List<int>> ScoreDir;
-
-    public void ClearAllValid(Candy candy)
+    
+    
+    [Button]
+    public void ClearAllValid()
     {
-        CandyType c = candy.CandyType.Color;
+        List<Candy> listMatch = new List<Candy>();
         
-        CalculateScore();
-        //Calculate score
-        //score > 0
-        // => scoring, destroy
-        //
-        var curPos = new Vector2(0, 0);
-        var dir = new Vector2(1, 0);
-        var i = 0;
-        var collecting = new List<Candy>();
-
-        int addCandy(List<int> candies, int idCandy)
+        for (int i = 0; i < Height; i++)
         {
-            return idCandy;
-        }
-        
-        while (i < total)
-        {
-            //move
-            curPos += dir;
-
-            foreach (var item in listCandy)
+            for (int j = 0; j < Width; j++)
             {
-                if (c == item.CandyType.Color)
-                {
-                    //gan => vao list
-                    collecting.Add(candy);
-                }
+                Debug.Log($"{i * offset} || {j * -offset + offsetY}");
+                
+                
+                //GetMatch(listCandy[i + j], listCandy[i].x, listCandy[j].y);
             }
-
-            /*if (idCandy == currentCandyid || collecting.Count == 0)
-            {
-                currentCandyid = addCandy(collecting, idCandy);
-            }*/
-
-            /*if (IsHitWall(curPos))
-            {
-                curPos = new Vector2(0, curPos.y + 1);
-            }*/
-            i++;
         }
+    }
+
+    public List<Candy> GetMatch(Candy candy, int x, int y)
+    {
+        List<Candy> xCandy = new List<Candy>();
+        List<Candy> yCandy = new List<Candy>();
+        List<Candy> matchCandy = new List<Candy>();
+        
+        xCandy.Add(candy);
+        Debug.Log($"{candy} || {x} || {y}");
+
+        if (x < 0 || x >= Height * offset)
+        {
+            return null;
+        }
+        
+        if (xCandy.Count >= 3)
+        {
+            for (int i = 0; i < xCandy.Count; i++)
+            {
+                matchCandy.Add(xCandy[i]);
+            }
+        }
+        
+        if (matchCandy.Count >= 3)
+        {
+            return matchCandy;
+        }
+        
+        xCandy.Clear();
+        yCandy.Clear();
+
+        return null;
     }
 
 
@@ -596,8 +315,6 @@ public class Grid : MonoBehaviour
     {
         var sumScore = 0;
         
-        
-
         return sumScore;
     }
 
@@ -605,45 +322,10 @@ public class Grid : MonoBehaviour
     {
         gameOver = true;
     }
-
-    /*public Vector2 DirUp = new Vector2(0, -1);
-    public Vector2 DirDown = new Vector2(0, 1);
-    public Vector2 DirLeft = new Vector2(-1, 0);
-    public Vector2 DirRight = new Vector2(1, 0);*/
-    public List<Vector2> BoardCell = new List<Vector2>();
-
-    [Button]
-    public void Testt()
-    {
-        var i = 0;
-        var currentDir = BoardCell[i];
-        var currentPos = new Vector2(0, Height - 1);
-        var nextCell = currentPos + currentDir;
-        var cellCollectedCell = 0;
-        
-        while (cellCollectedCell < total)
-        {
-            //collectCell(currentPos);
-            
-            Debug.Log(IsHitWall(nextCell));
-            
-            if (IsHitWall(nextCell)) //|| isCollectedCell(nextCell))
-            {
-                i = (i + 1) % BoardCell.Count;
-                currentDir = BoardCell[i];
-                nextCell = currentPos + currentDir;
-            }
-
-            cellCollectedCell++;
-            currentPos = nextCell;
-            
-            Debug.Log($"{nextCell}");
-        }
-    }
-
+    
     private bool IsHitWall(Vector2 nextCell)
     {
-        return nextCell.y > 0 || nextCell.y < Width * offset - 1;
+        return nextCell.x > 0 || nextCell.y < Width * offset - 1;
     }
     
 }

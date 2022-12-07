@@ -413,7 +413,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 207d63e85207b484abc735f25b8a74fa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _timeFill: 1
+  _timeFill: 0.5
   _speedFill: 2
   Height: 5
   Width: 5
@@ -428,11 +428,6 @@ MonoBehaviour:
   scores:
   - scoreType: 0
     scoreValue: 
-  DirUp: {x: 0, y: -1}
-  DirDown: {x: 0, y: 1}
-  DirLeft: {x: -1, y: 0}
-  DirRight: {x: 1, y: 0}
-  BoardCell: []
 --- !u!4 &1046656685
 Transform:
   m_ObjectHideFlags: 0
