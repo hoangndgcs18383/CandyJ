@@ -33,5 +33,9 @@ public class GameManager : MonoBehaviour
     {
         listPath = new List<Vector2>();
     }
-    
+
+    public void GameStart()
+    {
+        
+    }
 }

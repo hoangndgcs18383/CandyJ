@@ -1,11 +1,15 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.Rendering.Universal;
 
 
 public class Candy : MonoBehaviour
 {
+    public int score;
     private int id;
     public int index;
     private CandyType type;
@@ -13,11 +17,14 @@ public class Candy : MonoBehaviour
     private Colorable _candyType;
     private Moveable _move;
     private Dissolve _dissolve;
+    private Clearable _clearable;
+    public Light2D lightRender;
     public int x;
     public int y;
     public float lerpDuration = 5f;
     public float animationTime = 5f;
-    
+
+    public UnityAction<Candy, int, int> OnMoveComplete;
     float timeElapsed;
     float lerpedValue;
     public int counter;
@@ -31,6 +38,8 @@ public class Candy : MonoBehaviour
         get { return grid; }
     }
     public Colorable CandyType => _candyType;
+    public Clearable Clearable => _clearable;
+    
 
     public int ID
     {
@@ -61,6 +70,7 @@ public class Candy : MonoBehaviour
     private void Awake()
     {
         _candyType = GetComponent<Colorable>();
+        _clearable = GetComponent<Clearable>();
         _dissolve = GetComponentInChildren<Dissolve>();
     }
     
@@ -68,7 +78,7 @@ public class Candy : MonoBehaviour
     {
         grid = _grid;
     }
-    
+
     void FixedUpdate()
     {
         if (timeElapsed < lerpDuration)
@@ -106,15 +116,28 @@ public class Candy : MonoBehaviour
     public void Fill(float time)
     {
         var position = transform.position;
+        transform.position = Vector2.Lerp(ListPath()[counter], ListPath()[counter + 1], time);
         x = (int)position.x;
         y = (int)position.y;
-        transform.position = Vector2.Lerp(ListPath()[counter], ListPath()[counter + 1], time);
+        
+
         if (!IsNextPath()) return;
-        if(counter >= ListPath().Count - 2 - index) return;
+        if (counter >= ListPath().Count - 2 - index)
+        {
+            OnMoveComplete?.Invoke(this, x, y);
+            StartCoroutine(IDelay());
+            return;
+        }
+        
         counter++;
         timeElapsed = 0;
     }
 
+    IEnumerator IDelay()
+    {
+        yield return new WaitForSeconds(1f);
+    }
+    
     public bool IsNextPath()
     {
         Vector2 path = ListPath()[counter + 1];
@@ -122,5 +145,4 @@ public class Candy : MonoBehaviour
         
         return Math.Round(localPos.x) == Math.Round(path.x) && Math.Round(localPos.y) == Math.Round(path.y);
     }
-    
 }

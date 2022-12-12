@@ -19,7 +19,6 @@ public class Colorable : MonoBehaviour
         if (GameManager.Instance.candyDict.ContainsKey(newColor))
         {
             sprRenderer.sprite = GameManager.Instance.candyDict[newColor];
-            Debug.Log(type);
         }
     }
     

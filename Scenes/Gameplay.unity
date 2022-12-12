@@ -368,21 +368,21 @@ MonoBehaviour:
   listPath: []
   listCandyPrefab:
   - type: 0
-    sprite: {fileID: -858089350, guid: c7f628305e3ea884292fa5f77ee2ae3c, type: 3}
+    sprite: {fileID: -425089954, guid: c7f628305e3ea884292fa5f77ee2ae3c, type: 3}
   - type: 1
-    sprite: {fileID: -1663899955, guid: c7f628305e3ea884292fa5f77ee2ae3c, type: 3}
+    sprite: {fileID: -726379751, guid: c7f628305e3ea884292fa5f77ee2ae3c, type: 3}
   - type: 2
-    sprite: {fileID: -899638608, guid: c7f628305e3ea884292fa5f77ee2ae3c, type: 3}
+    sprite: {fileID: -1929679352, guid: c7f628305e3ea884292fa5f77ee2ae3c, type: 3}
   - type: 3
-    sprite: {fileID: 161210006, guid: c7f628305e3ea884292fa5f77ee2ae3c, type: 3}
+    sprite: {fileID: 1634595202, guid: c7f628305e3ea884292fa5f77ee2ae3c, type: 3}
   - type: 4
-    sprite: {fileID: -125114669, guid: c7f628305e3ea884292fa5f77ee2ae3c, type: 3}
-  - type: 5
     sprite: {fileID: -1653539065, guid: c7f628305e3ea884292fa5f77ee2ae3c, type: 3}
+  - type: 5
+    sprite: {fileID: -1703448478, guid: c7f628305e3ea884292fa5f77ee2ae3c, type: 3}
   - type: 6
     sprite: {fileID: 1009780160, guid: 28a8192cccd24894aafde1c53b851d01, type: 3}
   - type: 7
-    sprite: {fileID: -1896575860, guid: 28a8192cccd24894aafde1c53b851d01, type: 3}
+    sprite: {fileID: 1660858335, guid: c7f628305e3ea884292fa5f77ee2ae3c, type: 3}
   currentScore: 0
 --- !u!1 &1046656683
 GameObject:
@@ -425,9 +425,7 @@ MonoBehaviour:
   candyTF: {fileID: 429291960}
   enteredCandy: {fileID: 0}
   pressedCandy: {fileID: 0}
-  scores:
-  - scoreType: 0
-    scoreValue: 
+  level: {fileID: 0}
 --- !u!4 &1046656685
 Transform:
   m_ObjectHideFlags: 0
